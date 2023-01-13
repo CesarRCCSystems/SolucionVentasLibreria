@@ -1,0 +1,346 @@
+﻿
+@{
+    ViewBag.Title = "Clientes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-user-shield me-2"></i>
+                Lista de Clientes
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-info btn-block" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-success btn-block"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="tbclientes" class="table table-striped table-bordered nowrap compact">
+                            <thead>
+                                <tr>
+                                    <th>Tipo Documento</th>
+                                    <th>Número Documento</th>
+                                    <th>Nombres</th>
+                                    <th>Dirección</th>
+                                    <th>Teléfono</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="clienteModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <input id="txtIdCliente" type="hidden" value="" />
+
+                    <form id="CliForm">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mt-1">
+                                <label>Nombres:</label>
+                                <input id="txtNombreCli" type="text" class="form-control form-control-sm" name="nombres" />
+                            </div>
+
+                            <div class="col-md-6 mt-1">
+                                <label>Teléfono:</label>
+                                <input id="txtTelefonoCli" type="text" class="form-control form-control-sm" name="telefono" />
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mt-1">
+                                <label>Tipo Documento:</label>
+                                <select id="cboTipoDocumentoCli" class="form-select form-select-sm">
+                                    <option value="DNI">DNI</option>
+                                    <option value="Carnet Extranjeria">Carnet Extranjeria</option>
+                                    <option value="RUC">RUC</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mt-1">
+                                <label>Nro. Documento:</label>
+                                <input id="txtNroDocumentoCli" type="text" class="form-control form-control-sm" name="nrodocumento" />
+                            </div>
+
+                        </div>
+
+                        <div class="row mt-2">
+
+                            <div class="col-md-12">
+                                <label>Dirección:</label>
+                                <input id="txtDireccionCli" type="text" class="form-control form-control-sm" name="direccion" />
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <label>Estado:</label>
+                                <select id="cboEstadoCli" class="form-select form-select-sm">
+                                    <option value="1">Activo</option>
+                                    <option value="0">No Activo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">                  
+                            <div id="messageError" class="alert alert-danger" role="alert">
+
+                            </div>
+                         </div>
+                    </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-between bg-white">
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+                    </div>
+
+                </div>
+            </div>
+</div>
+
+
+@section scripts{
+    <script>
+        var dtClientes;
+        var filaSeleccionada;
+        ShowLoading();
+
+        $(function () {
+
+        Title('Clientes');
+        $.LoadingOverlay("hide");
+
+            dtClientes = GetDataTable({
+                TableId: '#tbclientes',
+                Url : '@Url.Action("ListarClientes", "Venta")',
+                Columns: [
+                    { "data": "TipoDocumento" },
+                    { "data": "NumeroDocumento" },
+                    { "data": "Nombre" },
+                    { "data": "Direccion" },
+                    { "data": "Telefono" }
+                ].concat(AED)
+            });
+
+        });
+
+
+        ////validamos el formulario
+        $("#CliForm").validate({
+            rules: {
+                nrodocumento: pValid(),
+                nombres: pValid(),
+                direccion: pValid(),
+                telefono: pValid(7)
+            },
+            messages: {
+                nrodocumento: `- El 'Numero de documento' <i class="fas fa-envelope"></i>  es obligatorio.`,
+                nombres: "- El 'Nombre' del cliente es obligatorio.",
+                direccion: "- La 'Dirección' del cliente' es obligatoria.",
+                telefono: "- El 'Telefono' del cliente es obligatorio."
+            },
+            errorElement: "div",
+            errorLabelContainer: ".alert-danger"
+        });
+
+        const abrirModal = ({ IdCliente, TipoDocumento, NumeroDocumento, Nombre, Direccion, Telefono, Activo }) => {
+
+            $('#messageError').hide();
+
+            limpiarModal();
+
+            if (IdCliente != null) {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-user-astronaut',
+                    Title: ' Editar Cliente'
+                });
+
+                $('#txtIdCliente').val(IdCliente);
+                $('#txtNombreCli').val(Nombre);
+                $('#txtTelefonoCli').val(Telefono);
+                $('#cboTipoDocumentoCli').val(TipoDocumento);
+                $('#txtNroDocumentoCli').val(NumeroDocumento);
+                $('#txtDireccionCli').val(Direccion);
+                $('#cboEstadoCli').val(Activo ? 1 : 0);
+
+            } else {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-user-astronaut',
+                    Title: ' Nuevo Cliente'
+                });
+            }
+
+            $('#clienteModal').modal('show');
+
+        }
+
+        const limpiarModal = () => {
+            $('.modal-title').html('')
+            $('#txtIdCliente').val(0);
+            $('#txtNombreCli').val('');
+            $('#txtTelefonoCli').val('');
+            $('#cboTipoDocumentoCli').val(1);
+            $('#txtNroDocumentoCli').val('');
+            $('#txtDireccionCli').val('');
+            $('#cboEstadoCli').val(1);
+        }
+
+        $('#tbclientes tbody').on('click', '.btn-editar', function () {
+
+            let { row, data } = GetRow({
+                table: dtClientes,
+                ctx: this
+            });
+
+            filaSeleccionada = row;
+
+            abrirModal(data);
+        });
+
+        $('#tbclientes  tbody').on('click', '.btn-eliminar', function () {
+
+            let { data, row } = GetRow({
+                table: dtClientes,
+                ctx: this
+            });
+
+            let { IdCliente, Nombre } = data;
+
+            SwalDelete({
+                Title: `¿Esta seguro (a) que desea eliminar al cliente "${Nombre}" ?`,
+                then: (result) => {
+
+                    if (result.isConfirmed) {
+
+                        AjaxPost({
+                            url: '@Url.Action("EliminarCliente", "Venta")',
+                            obj: { id: IdCliente },
+                            success: (data) => {
+
+                                if (data.resultado) {
+                                    dtClientes.row(row).remove().draw();
+                                    MsgToast(`El cliente "${Nombre}" ha sido eliminado correctamente.`);
+                                } else {
+                                    MsgError();
+                                    console.log(data.mensaje);
+                                }
+                            }
+                        });
+                   }
+                }
+            });
+
+        });
+
+
+        const guardar = () => {
+
+            if (!$('#CliForm').valid()) return;
+
+            var Cliente = {
+                IdCliente:        $('#txtIdCliente').val(),
+                TipoDocumento:    $('#cboTipoDocumentoCli').val(),
+                NumeroDocumento:  $('#txtNroDocumentoCli').val(),
+                Nombre:           $('#txtNombreCli').val(),
+                Direccion:        $('#txtDireccionCli').val(),
+                Telefono:         $('#txtTelefonoCli').val(),
+                Activo:           $('#cboEstadoCli').val() == 1 ? true : false,
+            };
+
+            AjaxPost({
+                url: '@Url.Action("GuardarCliente", "Venta")',
+                tloading: '.modal-body',
+                obj: Cliente,
+                success: (data) => {
+
+                    if (Cliente.IdCliente == 0) {
+                        if (data.resultado != 0) {
+                            Cliente.IdCliente = data.resultado;
+                            dtClientes.row.add(Cliente).draw(false);
+                            $('#clienteModal').modal('hide');
+                            MsgSaveSuccess();
+                        } else {
+                            MsgError();
+                            console.log(data.mensaje);
+                        }
+                    } else {
+                        if (data.resultado) {
+                            dtClientes.row(filaSeleccionada).data(Cliente).draw(false);
+                            filaSeleccionada = null;
+                            $('#clienteModal').modal('hide');
+                            MsgEditSuccess();
+                        } else {
+                            MsgError();
+                            console.log(data.mensaje);
+                        }
+                    }
+
+                }
+            });
+
+
+        }
+
+     
+
+    </script>
+
+}
+
+

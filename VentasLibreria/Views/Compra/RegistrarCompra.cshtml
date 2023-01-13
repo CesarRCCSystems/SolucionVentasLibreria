@@ -1,0 +1,603 @@
+﻿
+@{
+    ViewBag.Title = "RegistrarCompra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-outline card-info">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-cart-arrow-down me-2"></i>
+                Registrar Compra
+            </h3>
+        </div>
+
+        <div class="card-body p-2">
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="card border-info">
+                        <div class="card-body p-2">
+                            <h6 class="card-title mb-1 text-info">Detalle Proveedor Origen</h6>
+                            <div class="row align-items-end">
+                                <input id="txtIdProveedor" type="hidden" value="0" />
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRucProveedor" class="col-form-label col-form-label-sm">RUC:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtRucProveedor" name="RUC">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Razon Social:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtRazonSocialProveedor" name="RazonSocial">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <button id="btnBuscarProveedor" type="button" class="btn btn-sm btn-success btn-block" onclick="buscarProveedor()"><i class="fas fa-search"></i> Buscar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card border-info">
+                        <div class="card-body p-2">
+                            <h6 class="card-title mb-1 text-info">Detalle Tienda Destino</h6>
+                            <div class="row  align-items-end">
+                                <input id="txtIdTienda" type="hidden" value="0" />
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRucTienda" class="col-form-label col-form-label-sm">RUC:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtRucTienda" name="RUC">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtNombreTienda" class="col-form-label col-form-label-sm">Nombre:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtNombreTienda" name="NombreTienda">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <button id="btnBuscarTienda" type="button" class="btn btn-sm btn-success btn-block" onclick="buscarTienda()"><i class="fas fa-search"></i> Buscar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <div class="card border-info">
+                        <div class="card-body p-2">
+                            <h6 class="card-title mb-1 text-info">Detalle Producto</h6>
+                            <div class="row">
+                                <input id="txtIdProducto" type="hidden" value="0" />
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <label for="txtCodigoProducto" class="col-form-label col-form-label-sm">Codigo:</label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtCodigoProducto" name="Codigo" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <label for="txtNombreProducto" class="col-form-label col-form-label-sm">Nombre:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtNombreProducto" name="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <label for="btnBuscarTienda" class="col-form-label col-form-label-sm invisible">Buscar:</label>
+                                        <button id="btnBuscarProducto" type="button" class="btn btn-sm btn-success btn-block" onclick="buscarProducto()"><i class="fas fa-search"></i> Buscar</button>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <label for="txtCantidadProducto" class="col-form-label col-form-label-sm">Cantidad:</label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtCantidadProducto" name="Cantidad" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <label for="txtPrecioCompraProducto" class="col-form-label col-form-label-sm">Precio Compra: <span class="error"> S/.(00.00)</span></label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtPrecioCompraProducto" name="PrecioCompra" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <label for="txtPrecioVentaProducto" class="col-form-label col-form-label-sm">Precio Venta: <span class="error"> S/.(00.00)</span></label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtPrecioVentaProducto" name="PrecioVenta" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <button id="btnAgregarCompra" class="btn btn-primary btn-sm float-right">
+                        <i class="fas fa-plus"></i> Agregar a compra
+                    </button>
+                </div>
+
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div class="table-responsive-sm">
+                        <table id="tbCompra" class="table table-striped table-bordered nowrap table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Ruc Proveedor</th>
+                                    <th>Ruc Tienda</th>
+                                    <th>Codigo Producto</th>
+                                    <th>Nombre Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Compra</th>
+                                    <th>Precio Venta</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-white border-info">
+            <button id="btnTerminarGuardarCompra" class="btn btn-primary btn-sm float-right">
+                <i class="fas fa-tags"></i> Terminar y Guardar Compra
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL PROVEEDOR -->
+<div class="modal fade" id="modalProveedor" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Proveedores</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="tbProveedor" class="table table-striped table-bordered nowrap compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>RUC</th>
+                                <th>Razon Social</th>
+                                <th>Direccion</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TIENDA -->
+<div class="modal fade" id="modalTienda" tabindex="-1" data-bs-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Tiendas</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="tbTienda" class="table table-striped table-bordered nowrap compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>RUC</th>
+                                <th>Razón Social</th>
+                                <th>Direccion</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PRODUCTO -->
+<div class="modal fade" id="modalProducto" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Productos</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="tbProducto" class="table table-striped table-bordered nowrap compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Descripcion</th>
+                                <th>Categoria</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script>
+
+        var dtProveedor;
+        var dtTienda;
+        var dtProducto;
+
+        $(function () {
+            Title("Registrar Compra");
+
+            //OBTENER PROVEEDORES
+            dtProveedor = GetDataTable({
+                TableId: '#tbProveedor',
+                Url: '@Url.Action("ListarProveedores", "Compra")',
+                Columns: [
+                    {
+                        "data": "IdProveedor", "render": function (data, type, row, meta) {
+                            return "<button class='btn btn-sm btn-primary ml-2' type='button' onclick='proveedorSelect(" + JSON.stringify(row) + ")'><i class='fas fa-check'></i></button>"
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "90px"
+                    },
+                    { "data": "RUC" },
+                    { "data": "RazonSocial" },
+                    { "data": "Direccion" }
+                ]
+            });
+
+            //OBTENER TIENDAS
+            dtTienda = GetDataTable({
+                TableId: '#tbTienda',
+                Url: '@Url.Action("ListarTiendas", "Acceso")',
+                Columns: [
+                    {
+                        "data": "IdTienda", "render": function (data, type, row, meta) {
+                            return "<button class='btn btn-sm btn-primary ml-2' type='button' onclick='tiendaSelect(" + JSON.stringify(row) + ")'><i class='fas fa-check'></i></button>"
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "90px"
+                    },
+                    { "data": "RUC" },
+                    { "data": "Nombre" },
+                    { "data": "Direccion" }
+
+                ]
+            });
+
+            //OBTENER PRODUCTOS
+            dtProducto = GetDataTable({
+                TableId: '#tbProducto',
+                Url: '@Url.Action("ListarProductoPorTienda", "Compra")' + "?IdTienda=0",
+                Columns: [
+                    {
+                        "data": "IdProducto", "render": function (data, type, row, meta) {
+                            return "<button class='btn btn-sm btn-primary ml-2' type='button' onclick='productoSelect(" + JSON.stringify(row) + ")'><i class='fas fa-check'></i></button>"
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "90px"
+                    },
+                    { "data": "Codigo" },
+                    { "data": "Nombre" },
+                    { "data": "Descripcion" },
+                    {
+                        "data": "oCategoria", render: function (data) {
+                            return data.Descripcion
+                        }
+                    }
+
+                ]
+            });
+
+        });
+
+        function buscarProveedor() {
+            dtProveedor.ajax.reload();
+            $('#modalProveedor').modal('show');
+        }
+
+        function buscarTienda() {
+            dtTienda.ajax.reload();
+            $('#modalTienda').modal('show');
+        }
+
+        function buscarProducto() {
+            if (parseInt($("#txtIdTienda").val()) == 0) {
+                Swal.fire("Mensaje", "Debe seleccionar una tienda primero", "warning")
+                return;
+            }
+            dtProducto.ajax.url('@Url.Action("ListarProductoPorTienda", "Compra")' + "?IdTienda=" + $("#txtIdTienda").val()).load();
+
+            $('#modalProducto').modal('show');
+        }
+
+        function proveedorSelect(json) {
+
+            $("#txtIdProveedor").val(json.IdProveedor);
+            $("#txtRucProveedor").val(json.RUC);
+            $("#txtRazonSocialProveedor").val(json.RazonSocial);
+            $('#modalProveedor').modal('hide');
+        }
+
+        function tiendaSelect(json) {
+            $("#txtIdTienda").val(json.IdTienda);
+            $("#txtRucTienda").val(json.RUC);
+            $("#txtNombreTienda").val(json.Nombre);
+            $('#modalTienda').modal('hide');
+        }
+
+        function productoSelect(json) {
+            $("#txtIdProducto").val(json.IdProducto);
+            $("#txtCodigoProducto").val(json.Codigo);
+            $("#txtNombreProducto").val(json.Nombre);
+            $('#modalProducto').modal('hide');
+        }
+
+        $("#txtCodigoProducto").on('keypress', function (e) {
+
+            if (e.which == 13) {
+
+                //OBTENER PRODUCTOS
+                AjaxGet({
+                    tloading: "#txtCodigoProducto",
+                    url: '@Url.Action("ListarProductos", "Almacen")',
+                    success: (data) => {
+
+                        let encontrado = false;
+                        if (data.data != null) {
+                            $.each(data.data, function (i, item) {
+                                if (item.Activo == true && item.Codigo == $("#txtCodigoProducto").val()) {
+
+                                    $("#txtIdProducto").val(item.IdProducto);
+                                    $("#txtCodigoProducto").val(item.Codigo);
+                                    $("#txtNombreProducto").val(item.Nombre);
+
+                                    encontrado = true;
+                                    return false;
+                                }
+                            });
+
+                            if (!encontrado) {
+                                $("#txtIdProducto").val("0");
+                                $("#txtNombreProducto").val("");
+                            }
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+        $.fn.inputFilter = function (inputFilter) {
+            return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                if (inputFilter(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty("oldValue")) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                } else {
+                    this.value = "";
+                }
+            });
+        };
+
+        $("#txtCantidadProducto").inputFilter(function (value) {
+            return /^-?\d*$/.test(value);
+        });
+
+        $("#txtPrecioCompraProducto").inputFilter(function (value) {
+            return /^-?\d*[.]?\d{0,2}$/.test(value);
+        });
+
+        $("#txtPrecioVentaProducto").inputFilter(function (value) {
+            return /^-?\d*[.]?\d{0,2}$/.test(value);
+        });
+
+        $('#btnAgregarCompra').on('click', function () {
+
+            var existe_codigo = false;
+            if (
+                parseInt($("#txtIdProveedor").val()) == 0 ||
+                parseInt($("#txtIdTienda").val()) == 0 ||
+                parseInt($("#txtIdProducto").val()) == 0 ||
+                parseFloat($("#txtCantidadProducto").val()) == 0 ||
+                parseFloat($("#txtPrecioCompraProducto").val()) == 0 ||
+                parseFloat($("#txtPrecioVentaProducto").val()) == 0
+            ) {
+                Swal.fire("Mensaje", "Debe completar todos los campos", "warning")
+                return;
+            }
+
+            $('#tbCompra > tbody  > tr').each(function (index, tr) {
+                var fila = tr;
+                var codigoproducto = $(fila).find("td.codigoproducto").text();
+
+                if (codigoproducto == $("#txtCodigoProducto").val()) {
+                    existe_codigo = true;
+                    return false;
+                }
+
+            });
+
+            if (!existe_codigo) {
+                $("<tr>").append(
+                    $("<td>").append(
+                        $("<button>").addClass("btn btn-danger btn-sm").text("Eliminar")
+                    ),
+                    $("<td>").append($("#txtRucProveedor").val()),
+                    $("<td>").append($("#txtRucTienda").val()),
+                    $("<td>").addClass("codigoproducto").data("idproducto", $("#txtIdProducto").val()).append($("#txtCodigoProducto").val()),
+                    $("<td>").append($("#txtNombreProducto").val()),
+                    $("<td>").addClass("cantidad").append($("#txtCantidadProducto").val()),
+                    $("<td>").addClass("preciocompra").append($("#txtPrecioCompraProducto").val()),
+                    $("<td>").addClass("precioventa").append($("#txtPrecioVentaProducto").val()),
+                ).appendTo("#tbCompra tbody");
+
+                $("#txtIdProducto").val("0");
+                $("#txtCodigoProducto").val("");
+                $("#txtNombreProducto").val("");
+                $("#txtCantidadProducto").val("0");
+                $("#txtPrecioCompraProducto").val("0");
+                $("#txtPrecioVentaProducto").val("0");
+
+            } else {
+                Swal.fire("Mensaje", "El producto ya existe en la compra", "warning")
+            }
+        })
+
+        $('#tbCompra tbody').on('click', 'button[class="btn btn-danger btn-sm"]', function () {
+            $(this).parents("tr").remove();
+        })
+
+        $('#btnTerminarGuardarCompra').on('click', function () {
+
+
+            if ($('#tbCompra > tbody  > tr').length == 0) {
+                Swal.fire("Mensaje", "No existen detalles", "warning")
+                return;
+            }
+
+            let $xml = "";
+            let compra = "";
+            let detallecompra = ""
+            let detalle = "";
+            let totalcostocompra = 0;
+
+            $xml = "<DETALLE>";
+            compra = "<COMPRA>" +
+                "<IdUsuario>!idusuario¡</IdUsuario>" +
+                "<IdProveedor>" + $("#txtIdProveedor").val() + "</IdProveedor>" +
+                "<IdTienda>" + $("#txtIdTienda").val() + "</IdTienda>" +
+                "<TotalCosto>!totalcosto¡</TotalCosto>" +
+                "</COMPRA>";
+            detallecompra = "<DETALLE_COMPRA>"
+
+            $('#tbCompra > tbody  > tr').each(function (index, tr) {
+
+                let fila = tr;
+                let idproducto = parseFloat($(fila).find("td.codigoproducto").data("idproducto"));
+                let cantidad = parseFloat($(fila).find("td.cantidad").text());
+                let preciocompra = parseFloat($(fila).find("td.preciocompra").text());
+                let precioventa = parseFloat($(fila).find("td.precioventa").text());
+                let totalcosto = parseFloat(cantidad) * parseFloat(preciocompra);
+
+                detalle = detalle + "<DETALLE>" +
+                    "<IdCompra>0</IdCompra>" +
+                    "<IdProducto>" + idproducto + "</IdProducto>" +
+                    "<Cantidad>" + cantidad + "</Cantidad>" +
+                    "<PrecioUnidadCompra>" + preciocompra + "</PrecioUnidadCompra>" +
+                    "<PrecioUnidadVenta>" + precioventa + "</PrecioUnidadVenta>" +
+                    "<TotalCosto>" + totalcosto.toString() + "</TotalCosto>" +
+                    "</DETALLE>";
+                totalcostocompra = totalcostocompra + totalcosto;
+
+            });
+
+            compra = compra.replace("!totalcosto¡", totalcostocompra.toString());
+            $xml = $xml + compra + detallecompra + detalle + "</DETALLE_COMPRA></DETALLE>";
+
+            let request = { xml: $xml };
+
+
+            AjaxPost({
+                url: '@Url.Action("GuardarCompra", "Compra")',
+                obj: request,
+                success: (data) => {
+
+                    if (data.resultado) {
+
+                        //PROVEEDOR
+                        $("#txtIdProveedor").val("0");
+                        $("#txtRucProveedor").val("");
+                        $("#txtRazonSocialProveedor").val("");
+
+                        //TIENDA
+                        $("#txtIdTienda").val("0");
+                        $("#txtRucTienda").val("");
+                        $("#txtNombreTienda").val("");
+
+                        //PRODUCTO
+                        $("#txtIdProducto").val("0");
+                        $("#txtCodigoProducto").val("");
+                        $("#txtNombreProducto").val("");
+                        $("#txtCantidadProducto").val("0");
+                        $("#txtPrecioCompraProducto").val("0");
+                        $("#txtPrecioVentaProducto").val("0");
+
+                        $("#tbCompra tbody").html("");
+
+                        Swal.fire("Mensaje", "Se registro la compra", "success")
+                    } else {
+                        MsgError(data.mensaje);
+                        Swal.fire("Mensaje", "No se pudo registrar la compra", "warning")
+                    }
+                }
+            });
+
+        })
+
+    </script>
+}

@@ -1,0 +1,291 @@
+﻿
+@{
+    ViewBag.Title = "Rol";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-user-check"></i>
+                Lista de Roles
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-info btn-block" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-success btn-block"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="tbroles" class="table table-striped table-bordered nowrap compact">
+                            <thead>
+                                <tr>
+                                    <th>Descripción</th>                    
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Administrador</td>
+                                    <td>Activo</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Vendedor</td>
+                                    <td>Activo</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="rolModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <input id="txtIdRol" type="hidden" value="" />
+
+                <form id="RolForm">
+
+                    <div class="form-group">
+                        <label> Descripción:</label>
+                        <input id="txtRolDesc" type="text" class="form-control form-control-sm" name="descripcion" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado:</label>
+                        <select id="cboRolEstado" class="form-select form-select-sm">
+                            <option value="1">Activo</option>
+                            <option value="0">No Activo</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <div id="messageError" class="alert alert-danger" role="alert">
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between bg-white">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+        var dtRoles
+        var filaSeleccionada;
+
+        ShowLoading();
+
+        $(function () {
+            $.LoadingOverlay("hide")
+
+            Title("Rol");
+
+            dtRoles = GetDataTable({
+                TableId: '#tbroles',
+                Url: '@Url.Action("ListarRoles", "Acceso")',
+                Columns: [
+                    { "data": "Descripcion" }
+                ].concat(AED)
+            });
+
+        })
+
+        $('#RolForm').validate({
+            rules: {
+                descripcion: pValid(3)
+            },
+            messages: {
+                descripcion: "- El campo descripción es obligatorio"
+            },
+            errorElement: "div",
+            errorLabelContainer: ".alert-danger"
+        });
+
+        const abrirModal = ({ IdRol, Descripcion, Activo }) => {
+
+            limpiarModal();
+
+            $('#messageError').hide();
+
+            if (IdRol != null) {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-user-check',
+                    Title: ' Editar Rol'
+                });
+
+                $('#txtIdRol').val(IdRol);
+                $('#txtRolDesc').val(Descripcion);
+                $('#cboRolEstado').val(Activo ? 1 : 0);
+
+            } else {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-user-check',
+                    Title: ' Nuevo Rol'
+                });
+            }
+
+            $('#rolModal').modal('show');
+        }
+
+        const limpiarModal = () => {
+
+            $('.modal-title').html('');
+            $('#txtIdRol').val(0);
+            $('#txtRolDesc').val('');
+            $('#cboRolEstado').val(1);
+        }
+
+        $('#tbroles tbody').on('click', '.btn-editar', function () {
+
+            let { data, row } = GetRow({
+                table: dtRoles,
+                ctx: this
+            });
+
+            filaSeleccionada = row;
+
+            abrirModal(data);
+        });
+
+        $('#tbroles  tbody').on('click', '.btn-eliminar', function () {
+
+            let { data, row } = GetRow({
+                table: dtRoles,
+                ctx: this
+            });
+
+            let { IdRol, Descripcion } = data;
+
+            SwalDelete({
+                Title: `¿Esta seguro (a) que desea eliminar al rol "${Descripcion}" ?`,
+                then: (result) => {
+
+                    if (result.isConfirmed) {
+
+                        AjaxPost({
+                            url: '@Url.Action("EliminarRol", "Acceso")',
+                            obj: { id: IdRol },
+                            success: (data) => {
+
+
+                                if (data.mensaje.length) {
+                                    MsgError(data.mensaje);
+                                    return;
+                                }
+
+                                if (data.resultado) {
+                                    dtRoles.row(row).remove().draw();
+                                    MsgToast(`El Rol "${Descripcion}" ha sido eliminado correctamente.`);
+                                } 
+                            }
+                        });
+                   }
+                }
+            });
+
+        });
+
+        const guardar = () => {
+
+            if (!$('#RolForm').valid()) return;
+
+            let Rol = {
+                IdRol:          $('#txtIdRol').val(),
+                Descripcion:    $('#txtRolDesc').val().toUpperCase(),
+                Activo:         $('#cboRolEstado').val() == 1 ? true : false,
+            }
+
+            AjaxPost({
+                url: '@Url.Action("GuardarRol", "Acceso")',
+                tloading: '.modal-body',
+                obj: Rol,
+                success: (data) => {
+
+                    if (data.mensaje.length != 0) {
+                        MsgError(data.mensaje);
+                        return;
+                    }
+
+
+
+                    if (Rol.IdRol == 0) {
+                        if (data.resultado != 0) {
+                            Rol.IdRol = data.resultado;
+                            dtRoles.row.add(Rol).draw(false);
+                            $('#rolModal').modal('hide');
+                            MsgSaveSuccess();
+                        }
+
+                    } else {
+                        if (data.resultado) {
+                            dtRoles.row(filaSeleccionada).data(Rol).draw(false);
+                            filaSeleccionada = null;
+                            $('#rolModal').modal('hide');
+                            MsgEditSuccess();
+                        } 
+                    }
+                }
+            });
+
+
+        }
+    
+    </script>
+    <script></script>
+
+}
+

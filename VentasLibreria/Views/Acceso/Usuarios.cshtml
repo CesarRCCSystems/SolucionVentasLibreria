@@ -1,0 +1,499 @@
+﻿
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title">
+            <i class="fas fa-users"></i>
+            Lista de Usuarios
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-info btn-block" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-success btn-block"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="tbusuarios" class="table table-striped table-bordered nowrap compact">
+                            <thead>
+                                <tr>
+                                    <th>Rol</th>
+                                    <th>Nombres</th>
+                                    <th>Apellidos</th>
+                                    <th>Foto</th>
+                                    <th>Correo</th>                                  
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Administrador</td>
+                                    <td>Juan</td>
+                                    <td>Martin</td>
+                                    <td>juan@gmail.com</td>           
+                                    <td>Activo</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Vendedor</td>
+                                    <td>Pedro</td>
+                                    <td>Perez</td>
+                                    <td>pedro@gmil.com</td>
+                                    <td>Activo</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="usuarioModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <input id="txtIdUsuario" type="hidden" value="" />
+
+                <form id="UsuForm">
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Nombres:</label>
+                        <div class="col-sm-10">
+                            <input id="txtNombresUsu" type="text" class="form-control form-control-sm" value="" name="nombres" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Apellidos:</label>
+                        <div class="col-sm-10">
+                            <input id="txtApellidosUsu" type="text" class="form-control form-control-sm" value="" name="apellidos" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Correo:</label>
+                        <div class="col-sm-10">
+                            <input id="txtCorreoUsu" type="text" class="form-control form-control-sm" value="" name="correo" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Contraseña:</label>
+                        <div class="col-sm-10">
+                            <input id="txtPasswordUsu" type="password" class="form-control form-control-sm" value="" name="password" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Tienda:</label>
+                        <div class="col-sm-10">
+                            <select id="cboTienda" class="form-select form-select-sm">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Rol:</label>
+                        <div class="col-sm-10">
+                            <select id="cboRolUsu" class="form-select form-select-sm">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm">Estado:</label>
+                        <div class="col-sm-10">
+                            <select id="cboActivoUsu" class="form-select form-select-sm">
+                                <option value="1">Activo</option>
+                                <option value="0">No Activo</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label col-form-label-sm" for="exampleInputFile">Foto:</label>
+                        <div class="col-sm-10">
+                      
+                            <div class="input-group">
+                                <input id="fileUsuario" type="file" class="form-control form-control-sm" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" onchange="mostrarImagen(this)">
+                                <label class="nput-group-text" for="inputGroupFile04"></label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-2">
+
+                        </div>
+
+                        <div class="col-sm-4">
+                            <img id="img_usuario" style="width: 120px; height:120px;" accept="image/png, image/jpg, image/jpeg" class="img-thumbnail"/>
+                        </div>
+                    </div>
+             
+                </form>
+
+                <div id="messageError" class="alert alert-danger" role="alert">
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between bg-white">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var dtUsuarios;
+        var filaSeleccionada;
+        var oRol;
+        ShowLoading();
+
+        const mostrarImagen = (input) => {
+            if (input.files.length == 1) {
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $('#img_usuario').attr('src', e.target.result).width(120).height(120);
+                }              
+                reader.readAsDataURL(input.files[0]);
+
+            } else {
+                $('#img_usuario').attr('src', '@Url.Content("~/Files/Users/User.jpg")')
+            }
+        }
+
+
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select3').select2({
+                //theme: "classic",
+                dropdownParent: $('#usuarioModal')
+            })
+
+            //$('.form-select-sm').select2({
+            //    theme: 'bootstrap-5',
+            //    dropdownParent: $(".form-select-sm").parent()
+            //})
+
+            bsCustomFileInput.init();
+
+            Title("Usuarios");
+            $.LoadingOverlay("hide");
+
+            dtUsuarios = GetDataTable({
+                TableId: '#tbusuarios',
+                Url: '@Url.Action("ListarUsuarios", "Acceso")',
+                Columns: [
+                    {
+                        "data": "oRol",
+                        "render": function (data) {
+                            return data.Descripcion;
+                        }
+                    },
+                    { "data": "Nombres" },
+                    { "data": "Apellidos" },
+                    {
+                        "data": "Imagen",
+                        "render": function (Imagen) {
+                        
+                            return Imagen.length > 0 ? "<img src='" + Imagen + "' style='width:80px; height: 80px' class='rounded mx-auto d-block img-thumbnail'/>" :
+                                "<img src='" + '@Url.Content("~/Files/Users/User.jpg")' + "' style='width:80px; height: 80px' class='rounded mx-auto d-block img-thumbnail'/>";                         
+           
+                        }
+                    },
+                    { "data": "Correo" }
+                ].concat(AED)
+            });
+
+        });
+
+        ////validamos el formulario
+        $("#UsuForm").validate({
+            rules: {
+                nombres: pValid(),
+                apellidos: pValid(),
+                correo: pValid(),
+                password: pValid()
+            },
+            messages: {
+                nombres: "- El campo 'Nombres' es obligatorio.",
+                apellidos: "- El campo 'Apellidos' es obligatorio.",
+                correo: "- El campo 'Correo' es obligatorio.",
+                password: "- El campo 'Contraseña' es obligatorio."
+            },
+            errorElement: "div",
+            errorLabelContainer: ".alert-danger"
+        });
+
+        const abrirModal = ({ IdUsuario, Nombres, Apellidos, Correo, Activo, Clave, IdRol, IdTienda }) => {
+
+            limpiarModal();
+          
+            $('#messageError').hide();
+
+            if (IdUsuario != null) {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-users',
+                    Title: 'Editar Usuario'
+                });
+             
+                $('#txtIdUsuario').val(IdUsuario);
+                $('#txtNombresUsu').val(Nombres);
+                $('#txtApellidosUsu').val(Apellidos);
+                $('#txtCorreoUsu').val(Correo);
+                $('#txtPasswordUsu').val(Clave);
+                $('#cboRolUsu').val(IdRol);
+                $('#cboTienda').val(IdTienda);
+                $('#cboActivoUsu').val(Activo ? 1 : 0);            
+
+                AjaxPost({
+                    url: '@Url.Action("ImageUsuario", "Acceso")',
+                    obj: { id: IdUsuario },
+                    tloading: '#img_usuario',
+                    success: (data) => {
+                        
+                        if (data.conversion) {
+                            $('#img_usuario').attr({ "src":"data:image/" + data.extension + ";base64," + data.textoBase64});
+                        }
+                    }
+                });
+
+
+            } else {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-users',
+                    Title: 'Nuevo Usuario'
+                });
+
+            }
+
+            $('#usuarioModal').modal('show');
+
+        }
+
+        const limpiarModal = () => {
+
+            $('.modal-title').html('');
+            $('#txtIdUsuario').val(0);
+            $('#txtNombresUsu').val('');
+            $('#txtApellidosUsu').val('');
+            $('#txtCorreoUsu').val('');
+            $('#txtPasswordUsu').val('');
+            $('#cboRolUsu').val($("#cboRolUsu option:first").val());
+            $('#cboTienda').val($("#cboTienda option:first").val());
+            $('#cboActivoUsu').val(1);
+            $('#img_usuario').attr('src', '@Url.Content("~/Files/Users/User.jpg")');
+            $('#fileUsuario').val('');
+
+        }
+
+        $('#tbusuarios').on('click', '.btn-editar', function(){
+
+            let { data, row } = GetRow({
+                table: dtUsuarios,
+                ctx : this
+            });
+
+            filaSeleccionada = row;          
+            abrirModal(data);
+
+        });
+
+        $('#tbusuarios  tbody').on('click', '.btn-eliminar', function () {
+
+            let { data, row } = GetRow({
+                table: dtUsuarios,
+                ctx: this
+            });
+
+            let { IdUsuario, Nombres, Apellidos } = data;
+
+            SwalDelete({
+                Title: `¿Esta seguro (a) que desea eliminar al usuario "${Nombres} ${Apellidos}" ?`,
+                then: (result) => {
+
+                    if (result.isConfirmed) {
+
+                        AjaxPost({
+                            url: '@Url.Action("EliminarUsuario", "Acceso")',
+                            obj: { id: IdUsuario },
+                            success: (data) => {
+
+                                if (data.resultado) {
+                                    dtUsuarios.row(row).remove().draw();
+                                    MsgToast(`El Usuario "${Nombres} ${Apellidos}" ha sido eliminado correctamente.`);
+                                } else {
+                                    MsgError();
+                                    console.log(data.mensaje);
+                                }
+                            }
+                        });
+                   }
+                }
+            });
+
+        });
+
+        // OBTENER TIENDAS ////////////////
+
+        AjaxGet({
+            url: '@Url.Action("ListarTiendas","Acceso")',
+            success: (data) => {
+                $('#cboTienda').html('');
+                if (data.data != null) {
+
+                    $.each(data.data, (index, item) => {
+                        if (item.Activo) {
+                            $('<option>')
+                                .attr({ "value": item.IdTienda })
+                                .text(item.Nombre)
+                                .appendTo('#cboTienda');
+                        }
+                    });
+                }
+            }
+        });
+
+        // OBTENER ROLES ////////////////
+
+        AjaxGet({
+            url: '@Url.Action("ListarRoles","Acceso")',
+            success: (data) => {
+                $('#cboRolUsu').html('');
+                if (data.data != null) {
+
+                    $.each(data.data, (index, item) => {
+                        if (item.Activo) {
+                            $('<option>')
+                                .attr({ "value": item.IdRol })
+                                .text(item.Descripcion)
+                                .appendTo('#cboRolUsu');
+                        }
+                    });
+                }
+            }
+        });
+
+        const guardar = () => {
+
+            if (!$('#UsuForm').valid()) return;
+
+            let ImagenSeleccionada = $("#fileUsuario")[0].files[0];
+
+            let Usuario = {
+                IdUsuario:  $('#txtIdUsuario').val(),
+                Nombres:    $('#txtNombresUsu').val(),
+                Apellidos:  $('#txtApellidosUsu').val(),
+                Correo:     $('#txtCorreoUsu').val(),
+                Clave:      $('#txtPasswordUsu').val(),
+                IdTienda:   $('#cboTienda').val(),
+                IdRol:      $('#cboRolUsu').val(),
+                Activo: $('#cboActivoUsu').val() ? true : false,
+                oRol: {                
+                    Descripcion: $('#cboRolUsu option:selected').text(),
+                }
+            }
+
+            let request = new FormData();
+
+            request.append("obj", JSON.stringify(Usuario));
+            request.append("archivoImagen", ImagenSeleccionada);
+
+            AjaxPost({
+                url: '@Url.Action("GuardarUsuario", "Acceso")',
+                tloading: '.modal-body',
+                data: request,
+                success: (data) => {
+                   
+                    if (data.mensaje.length != 0) {
+                        MsgError(data.mensaje);
+                        return;
+                    }
+                   
+                    if (Usuario.IdUsuario == 0) {
+
+                        if (data.IdUsuario != 0) {
+                            //Usuario.IdUsuario = data.IdUsuario;
+                            //dtUsuarios.row.add(Usuario).draw(false);
+                            dtUsuarios.ajax.reload();
+                            $('#usuarioModal').modal('hide');
+                            MsgSaveSuccess();
+                        }
+                    } else {
+
+                        if (data.operacionExitosa) {
+                            //dtUsuarios.row(filaSeleccionada).data(Usuario).draw(false);
+                            //filaSeleccionada = null;
+                            dtUsuarios.ajax.reload();
+                            $('#usuarioModal').modal('hide');
+                            MsgEditSuccess();
+                        } 
+                    }
+
+                }
+            });
+
+        }
+
+
+    </script>
+
+}
+

@@ -1,0 +1,350 @@
+﻿
+@{
+    ViewBag.Title = "Productos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-box-open"></i>
+                Lista de Productos
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-info btn-block" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-success btn-block"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="tbproducto" class="table table-striped table-bordered nowrap compact">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Categoría</th>
+                                    <th>Marca</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <i class="fas fa-cla"></i>
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="FormModal" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-info">
+            <div class="modal-header text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Producto</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                    <input id="txtid" value="0" type="hidden" />
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">Codigo</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm model" id="txtCodigo" name="Codigo">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">Nombre <span class="error"></span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm model" id="txtNombre" name="Nombre" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">Descripcion <span class="error"></span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm model" id="txtDescripcion" name="Descripcion" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label col-form-label-sm">Categoria</label>
+                        <div class="col-sm-10">
+                            <select class="form-control form-control-sm model" id="cboCategoria" name="Categoria"></select>
+                        </div>
+                    </div>    
+
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label col-form-label-sm">Marca</label>
+                        <div class="col-sm-10">
+                            <select class="form-control form-control-sm model" id="cboMarca" name="Marca"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label col-form-label-sm">Activo</label>
+                        <div class="col-sm-10">
+                            <select class="form-control form-control-sm model" id="cboEstado" name="Activo">
+                                <option value="1">Activo</option>
+                                <option value="0">No Activo</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between bg-white">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+    <script>
+        var dtProducto
+        var filaSeleccionada
+
+        ShowLoading();
+
+        $(function () {
+            $.LoadingOverlay("hide");
+
+            Title("Productos");
+
+            dtProducto = GetDataTable({
+                TableId: '#tbproducto',
+                Url: '@Url.Action("ListarProductos", "Almacen")',
+                Columns: [
+                    { "data": "Codigo" },
+                    { "data": "Nombre" },
+                    { "data": "Descripcion" },
+                    {
+                        "data": "oCategoria",
+                        "render": function (data) {
+                            return data.Descripcion;
+                        }
+                    },
+                    {
+                        "data": "oMarca",
+                        "render": function (data) {
+                            return data.Descripcion;
+                        }
+                    }
+                ].concat(AED)
+            });
+
+
+            //OBTENER CATEGORIAS
+            AjaxGet({
+                url: "@Url.Action("ListarCategorias", "Almacen")",
+                tloading: "",
+                success: (data) => {
+
+                    if (data.data != null) {
+                        $.each(data.data, function (i, item) {
+
+                            if (item.Activo == true) {
+                                $("<option>").attr({ "value": item.IdCategoria }).text(item.Descripcion).appendTo("#cboCategoria");
+                            }
+                        })
+                        $("#cboCategoria").val($("#cboCategoria option:first").val());
+                    }
+
+                }
+            });
+
+            //OBTENER MARCAS
+            AjaxGet({
+                url: "@Url.Action("ListarMarcas", "Almacen")",
+                tloading: "",
+                success: (data) => {
+
+                    if (data.data != null) {
+                        $.each(data.data, function (i, item) {
+
+                            if (item.Activo == true) {
+                                $("<option>").attr({ "value": item.IdMarca }).text(item.Descripcion).appendTo("#cboMarca");
+                            }
+                        })
+                        $("#cboMarca").val($("#cboMarca option:first").val());
+                    }
+
+                }
+            });
+
+
+        });
+
+
+        const abrirModal = ({ IdProducto, Codigo, Nombre, Descripcion, oCategoria, oMarca, Activo }) => {
+
+            limpiarModel();
+
+            if (IdProducto != null) {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-box-open',
+                    Title: ' Editar Producto'
+                });
+
+                $("#txtid").val(IdProducto);
+                $("#txtCodigo").val(Codigo);
+                $("#txtNombre").val(Nombre);
+                $("#txtDescripcion").val(Descripcion);
+                $("#cboCategoria").val(oCategoria.IdCategoria);
+                $("#cboMarca").val(oMarca.IdMarca);
+                $("#cboEstado").val(Activo == true ? 1 : 0);
+                $("#txtCodigo").prop("disabled", true)
+
+            } else {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-box-open',
+                    Title: ' Nuevo Producto'
+                });
+
+            }
+
+            $('#FormModal').modal('show');
+
+        }
+
+        const limpiarModel = () => {
+
+            $('.modal-title').html('');
+            $("#txtid").val(0);
+            $("#txtCodigo").val("AUTOGENERADO");
+            $("#txtCodigo").prop("disabled", true)
+            $("#txtNombre").val("");
+            $("#txtDescripcion").val("");
+            $("#cboCategoria").val($("#cboCategoria option:first").val());
+            $("#cboEstado").val(1);
+        }
+
+        $('#tbproducto tbody').on('click','.btn-editar', function (){
+
+            let { row, data } = GetRow({
+                table: dtProducto,
+                ctx: this
+            });
+
+            filaSeleccionada = row;
+
+            abrirModal(data);
+
+        });
+
+        $('#tbproducto tbody').on('click', '.btn-eliminar', function () {
+
+        let { row, data } = GetRow({
+            table: dtProducto,
+            ctx: this
+        });
+
+        let { IdProducto, Nombre } = data;
+
+        SwalDelete({
+            Title: `¿Esta seguro(a) que desea eliminar el producto "${Nombre}"?`,
+            then: (result) => {
+
+                if (result.isConfirmed) {
+
+                    AjaxPost({
+                        url: '@Url.Action("EliminarProducto", "Almacen")',
+                        obj: { id: IdProducto },
+                        success: (data) => {
+
+                            if (data.resultado) {
+                                dtProducto.row(row).remove().draw();
+                                MsgToast(`El producto "${Nombre}" ha sido eliminada correctamente.`);
+                            } else {
+                                MsgError(data.mensaje);
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+    });
+
+
+        const guardar = () => {
+
+            let Producto = {
+                IdProducto:  parseInt($("#txtid").val()),
+                Nombre:      $("#txtNombre").val(),
+                Descripcion: $("#txtDescripcion").val(),
+                oCategoria:  { IdCategoria: $("#cboCategoria").val() },
+                oMarca:      { IdMarca: $("#cboMarca").val() },
+                Activo:      ($("#cboEstado").val() == "1" ? true : false)
+            }
+
+            AjaxPost({
+                url: '@Url.Action("GuardarProducto", "Almacen")',
+                obj: Producto,
+                tloading: '.modal-body',
+                success: (data) => {
+
+                    if (data.mensaje.length != 0) {
+                        MsgError(data.mensaje);
+                        return;
+                    }
+
+                    MsgSuccessSE(Producto.IdProducto);
+                    dtProducto.ajax.reload();
+                    $('#FormModal').modal('hide');
+                }
+            });
+
+          
+
+        }
+
+
+
+
+    </script>
+
+}
+

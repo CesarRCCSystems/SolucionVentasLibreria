@@ -1,0 +1,922 @@
+﻿
+@{
+    ViewBag.Title = "RegistrarVenta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-outline card-info">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-cash-register me-2"></i>
+                Detalle Venta
+            </h3>
+
+            <button id="btnTerminarGuardarVenta" class="btn btn-warning btn-sm float-right">
+                <i class="fa fa-print" aria-hidden="true"></i> Imprimir y Terminar Venta
+            </button>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-sm-3">
+                    <div class="input-group input-group-sm mb-2">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text bg-info text-white" for="inputGroupSelect01">Tipo Documento</label>
+                        </div>
+                        <select class="custom-select" id="cboventatipodocumento">
+                            <option value="Boleta">Boleta</option>
+                            <option value="Factura">Factura</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="input-group input-group-sm mb-2">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text bg-info text-white" for="inputGroupSelect01">Fecha de Venta</label>
+                        </div>
+                        <input id="txtfechaventa" readonly type="text" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="card bg-info text-white border-info">
+                        <div class="card-body p-2">
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <h6 class="card-title mb-1">Tienda origen</h6>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="float-right">
+                                        <a class="btn btn-light btn-sm" data-bs-toggle="collapse" href="#collapse1" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row collapse" id="collapse1">
+                                <input id="txtIdTienda" type="hidden" value="0" />
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Nombre:</label>
+                                        <label class="form-control form-control-sm model mb-1" readonly id="lbltiendanombre"></label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">RUC:</label>
+                                        <label class="form-control form-control-sm model mb-1" readonly id="lbltiendaruc"></label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Direccion:</label>
+                                        <label class="form-control form-control-sm model mb-1" readonly id="lbltiendadireccion"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card bg-info text-white border-info">
+                        <div class="card-body p-2">
+
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <h6 class="card-title mb-1">Datos Empleado</h6>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="float-right">
+                                        <a class="btn btn-light btn-sm" data-bs-toggle="collapse" href="#collapse2" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row collapse" id="collapse2">
+                                <input id="txtIdUsuario" type="hidden" value="0" />
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRucProveedor" class="col-form-label col-form-label-sm">Nombre:</label>
+                                        <label class="form-control form-control-sm model mb-1" readonly id="lblempleadonombre"></label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Apellido:</label>
+                                        <label class="form-control form-control-sm model mb-1" readonly id="lblempleadoapellido"></label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Correo:</label>
+                                        <label class="form-control form-control-sm model mb-1" readonly id="lblempleadocorreo"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-2">
+
+                <div class="col-sm-6">
+                    <div class="card border-info">
+                        <div class="card-body p-2">
+                            <h6 class="card-title mb-1 text-info">Detalle cliente</h6>
+                            <div class="row align-items-end">
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Tipo Documento:</label>
+                                        <select class="form-control form-control-sm model" id="cboclientetipodocumento" name="Rol">
+                                            <option value="DNI">DNI</option>
+                                            <option value="Carnet Extranjeria">Carnet Extranjeria</option>
+                                            <option value="RUC">RUC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Numero Documento: <span class="required">*</span> </label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtclientedocumento" name="RazonSocial" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Nombres: <span class="required">*</span></label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtclientenombres" name="RazonSocial" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <button id="btnBuscarCliente" type="button" class="btn btn-sm btn-primary btn-block"><i class="fas fa-search"></i> Buscar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Direccion:</label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtclientedireccion" name="clientedireccion" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-0">
+                                        <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Telefono:</label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtclientetelefono" name="RazonSocial" autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card border-info">
+
+                        <div class="card-body p-2">
+                            <h6 class="card-title mb-1 text-info">Detalle Producto</h6>
+
+                            <div class="row align-items-end">
+                                <input id="txtIdProducto" type="hidden" value="0" />
+
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtproductocodigo" class="col-form-label col-form-label-sm">Codigo: <span class="required">*</span></label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtproductocodigo" name="Codigo" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtproductonombre" class="col-form-label col-form-label-sm">Nombre:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtproductonombre" name="Nombre">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-0">
+                                        <label for="txtproductodescripcion" class="col-form-label col-form-label-sm">Descripcion:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtproductodescripcion" name="Descripcion">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group mb-0">
+                                        <button id="btnBuscarProducto" type="button" class="btn btn-sm btn-primary btn-block"><i class="fas fa-search"></i> Buscar</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtproductostock" class="col-form-label col-form-label-sm">En Stock:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtproductostock" name="Codigo">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtproductoprecio" class="col-form-label col-form-label-sm">Precio:</label>
+                                        <input type="text" class="form-control form-control-sm model" readonly id="txtproductoprecio" name="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="txtproductocantidad" class="col-form-label col-form-label-sm">Cantidad: <span class="required">*</span></label>
+                                        <input type="text" class="form-control form-control-sm model" id="txtproductocantidad" name="Descripcion" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group mb-0">
+                                        <label for="btnAsignar" class="col-form-label col-form-label-sm invisible">Buscar:</label>
+                                        <button id="btnAgregar" type="button" class="btn btn-sm btn-success btn-block"><i class="fas fa-cart-plus me-2" aria-hidden="true"></i>  Agregar</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-12"><h6 class="text-info">Detalle Productos</h6></div>
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-sm-12">
+                    <div class="table-responsive-sm">
+                        <table id="tbVenta" class="table table-striped table-bordered nowrap table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Cantidad</th>
+                                    <th>Producto</th>
+                                    <th>Descripcion</th>
+                                    <th>Precio Unidad</th>
+                                    <th>Importe Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr />
+            <!-- --->
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="row">
+
+                        <div class="col-sm-4">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-info text-white" for="inputGroupSelect01">Sub Total S/.</label>
+                                </div>
+                                <input id="txtsubtotal" readonly type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-info text-white" for="inputGroupSelect01">IGV S/.</label>
+                                </div>
+                                <input id="txtigv" readonly type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-info text-white" for="inputGroupSelect01">Total S/.</label>
+                                </div>
+                                <input id="txttotal" readonly type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-info text-white" for="inputGroupSelect01">Monto Pago S/.</label>
+                                </div>
+                                <input id="txtmontopago" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <button id="btncalcular" type="button" class="btn btn-sm btn-success btn-block"><i class="fas fa-dollar-sign"></i>  Calcular</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-info text-white" for="inputGroupSelect01">Cambio S/.</label>
+                                </div>
+                                <input id="txtcambio" readonly type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- MODAL PRODUCTOS -->
+<div class="modal fade" id="modalProducto" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                <i class="fas fa-box-open me-2"></i>
+                Productos
+                </h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="tbProducto" class="table table-striped table-bordered nowrap compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Descripcion</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CLIENTES -->
+<div class="modal fade" id="modalCliente" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                  <i class="fas fa-user-shield me-2"></i>
+                    Clientes
+                </h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="tbcliente" class="table table-striped table-bordered nowrap compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Tipo Documento</th>
+                                <th>Numero Documento</th>
+                                <th>Nombres</th>
+                                <th>Direccion</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var dtProducto;
+        var dtCliente;
+        ShowLoading();
+
+
+        $(function () {
+            HideLoading();
+            Title("Registrar Venta");
+
+            $("#txtproductocantidad").val("0");
+            $("#txtfechaventa").val(ObtenerFecha());
+
+            //OBTENER PROVEEDORES
+            AjaxGet({
+                url: '@Url.Action("ObtenerUsuario", "Venta")',
+                tloading: "#cboProveedor",
+                success: (data) => {
+
+                    let { resultado, mensaje } = data; 
+
+                    if (mensaje.length != 0) {
+                        MsgError(mensaje);
+                        return;
+                    }
+
+                    //TIENDA
+                    $("#txtIdTienda").val(resultado.oTienda.IdTienda);
+                    $("#lbltiendanombre").text(resultado.oTienda.Nombre);
+                    $("#lbltiendaruc").text(resultado.oTienda.RUC);
+                    $("#lbltiendadireccion").text(resultado.oTienda.Direccion);
+
+                    //USUARIO
+                    $("#txtIdUsuario").val(resultado.IdUsuario);
+                    $("#lblempleadonombre").text(resultado.Nombres);
+                    $("#lblempleadoapellido").text(resultado.Apellidos);
+                    $("#lblempleadocorreo").text(resultado.Correo);
+                }
+            });
+
+
+            //OBTENER PRODUCTOS
+            dtProducto = GetDataTable({
+                TableId: '#tbProducto',
+                Url: '@Url.Action("ObtenerProductoPorTienda", "Venta")' + "?IdTienda=0",
+                Columns: [
+                    {
+                        "data": "IdProductoTienda", "render": function (data, type, row, meta) {
+                            return "<button class='btn btn-sm btn-primary ml-2' type='button' onclick='productoSelect(" + JSON.stringify(row) + ")'><i class='fas fa-check'></i></button>"
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "90px"
+                    },
+                    {
+                        "data": "oProducto", render: function (data) {
+                            return data.Codigo
+                        }
+                    },
+                    {
+                        "data": "oProducto", render: function (data) {
+                            return data.Nombre
+                        }
+                    },
+                    {
+                        "data": "oProducto", render: function (data) {
+                            return data.Descripcion
+                        }
+                    },
+                    { "data": "Stock" }
+                ]
+            });
+
+
+            dtCliente = GetDataTable({
+                TableId: '#tbcliente',
+                Url: '@Url.Action("ListarClientes", "Venta")',
+                Columns: [
+                    {
+                        "data": "IdCliente", "render": function (data, type, row, meta) {
+                            return "<button class='btn btn-sm btn-primary ml-2' type='button' onclick='clienteSelect(" + JSON.stringify(row) + ")'><i class='fas fa-check'></i></button>"
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "90px"
+                    },
+                    { "data": "TipoDocumento" },
+                    { "data": "NumeroDocumento" },
+                    { "data": "Nombre" },
+                    { "data": "Direccion" }
+                ]
+            });         
+      
+        });
+
+        function ObtenerFecha() {
+
+            var d = new Date();
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+            var output = (('' + day).length < 2 ? '0' : '') + day + '/' + (('' + month).length < 2 ? '0' : '') + month + '/' + d.getFullYear();
+
+            return output;
+        }
+
+        $.fn.inputFilter = function (inputFilter) {
+            return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                if (inputFilter(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty("oldValue")) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                } else {
+                    this.value = "";
+                }
+            });
+        };
+
+        $("#txtproductocantidad").inputFilter(function (value) {
+            return /^-?\d*$/.test(value);
+        });
+
+        $("#txtmontopago").inputFilter(function (value) {
+            return /^-?\d*[.]?\d{0,2}$/.test(value);
+        });
+
+        $('#btnBuscarProducto').on('click', function () {
+
+
+            dtProducto.ajax.url('@Url.Action("ObtenerProductoPorTienda", "Venta")' + "?IdTienda=" + parseInt($("#txtIdTienda").val())).load();
+
+            $('#modalProducto').modal('show');
+        })
+
+        $('#btnBuscarCliente').on('click', function () {
+
+            dtCliente.ajax.reload();
+
+            $('#modalCliente').modal('show');
+        })
+
+        function productoSelect(json) {
+            $("#txtIdProducto").val(json.oProducto.IdProducto);
+            $("#txtproductocodigo").val(json.oProducto.Codigo);
+            $("#txtproductonombre").val(json.oProducto.Nombre);
+            $("#txtproductodescripcion").val(json.oProducto.Descripcion);
+            $("#txtproductostock").val(json.Stock);
+            $("#txtproductoprecio").val(json.PrecioUnidadVenta);
+            $("#txtproductocantidad").val("0");
+            $('#modalProducto').modal('hide');
+        }
+
+        function clienteSelect(json) {
+
+            $("#cboclientetipodocumento").val(json.TipoDocumento);
+            $("#txtclientedocumento").val(json.NumeroDocumento);
+            $("#txtclientenombres").val(json.Nombre);
+            $("#txtclientedireccion").val(json.Direccion);
+            $("#txtclientetelefono").val(json.Telefono);
+            $('#modalCliente').modal('hide');
+        }
+
+
+        $("#txtproductocodigo").on('keypress', function (e) {
+
+
+            if (e.which == 13) {
+
+                var request = { IdTienda: parseInt($("#txtIdTienda").val()) }
+
+                //OBTENER PROVEEDORES
+
+                AjaxGet({
+                    url: '@Url.Action("ObtenerProductoPorTienda", "Venta")' + "?IdTienda=" + parseInt($("#txtIdTienda").val()),
+                    tloading: "#cboProveedor",
+                    success: (data) => {
+
+                        var encontrado = false;
+                        if (data.data != null) {
+
+                            $.each(data.data, function (i, item) {
+                                if (item.oProducto.Codigo == $("#txtproductocodigo").val()) {
+
+                                    $("#txtIdProducto").val(item.oProducto.IdProducto);
+                                    $("#txtproductocodigo").val(item.oProducto.Codigo);
+                                    $("#txtproductonombre").val(item.oProducto.Nombre);
+                                    $("#txtproductodescripcion").val(item.oProducto.Descripcion);
+                                    $("#txtproductostock").val(item.Stock);
+                                    $("#txtproductoprecio").val(item.PrecioUnidadVenta);
+                                    encontrado = true;
+                                    return false;
+                                }
+                            })
+
+                            if (!encontrado) {
+
+                                $("#txtIdProducto").val("0");
+                                $("#txtproductocodigo").val("");
+                                $("#txtproductonombre").val("");
+                                $("#txtproductodescripcion").val("");
+                                $("#txtproductostock").val("");
+                                $("#txtproductoprecio").val("");
+                                $("#txtproductocantidad").val("0");
+
+                            }
+                        }
+                    }
+
+                });
+
+            }
+        });
+
+        $('#btnAgregar').on('click', function () {
+
+            $("#txtproductocantidad").val($("#txtproductocantidad").val() == "" ? "0" : $("#txtproductocantidad").val());
+
+            var existe_codigo = false;
+            if (
+                parseInt($("#txtIdProducto").val()) == 0 ||
+                parseFloat($("#txtproductocantidad").val()) == 0
+            ) {
+                Swal.fire("Mensaje", "Debe completar todos los campos del producto", "warning")
+                return;
+            }
+
+            $('#tbVenta > tbody  > tr').each(function (index, tr) {
+                var fila = tr;
+                var idproducto = $(fila).find("td.producto").data("idproducto");
+
+                if (idproducto == $("#txtIdProducto").val()) {
+                    existe_codigo = true;
+                    return false;
+                }
+
+            });
+
+            if (!existe_codigo) {
+
+                controlarStock(parseInt($("#txtIdProducto").val()), parseInt($("#txtIdTienda").val()), parseInt($("#txtproductocantidad").val()), true);
+
+                var importetotal = parseFloat($("#txtproductoprecio").val()) * parseFloat($("#txtproductocantidad").val());
+                $("<tr>").append(
+                    $("<td>").append(
+                        $("<button>").addClass("btn btn-danger btn-sm").text("Eliminar").data("idproducto", parseInt($("#txtIdProducto").val())).data("cantidadproducto", parseInt($("#txtproductocantidad").val()))
+                    ),
+                    $("<td>").addClass("productocantidad").text($("#txtproductocantidad").val()),
+                    $("<td>").addClass("producto").data("idproducto", $("#txtIdProducto").val()).text($("#txtproductonombre").val()),
+                    $("<td>").text($("#txtproductodescripcion").val()),
+                    $("<td>").addClass("productoprecio").text($("#txtproductoprecio").val()),
+                    $("<td>").addClass("importetotal").text(importetotal)
+
+                ).appendTo("#tbVenta tbody");
+
+                $("#txtIdProducto").val("0");
+                $("#txtproductocodigo").val("");
+                $("#txtproductonombre").val("");
+                $("#txtproductodescripcion").val("");
+                $("#txtproductostock").val("");
+                $("#txtproductoprecio").val("");
+                $("#txtproductocantidad").val("0");
+
+                $("#txtproductocodigo").focus();
+
+                calcularPrecios();
+            } else {
+                Swal.fire("Mensaje", "El producto ya existe en la venta", "warning")
+            }
+        })
+
+        $('#tbVenta tbody').on('click', 'button[class="btn btn-danger btn-sm"]', function () {
+            var idproducto = $(this).data("idproducto");
+            var cantidadproducto = $(this).data("cantidadproducto");
+
+            controlarStock(idproducto, parseInt($("#txtIdTienda").val()), cantidadproducto, false);
+            $(this).parents("tr").remove();
+
+            calcularPrecios();
+        })
+
+        $('#btnTerminarGuardarVenta').on('click', function () {
+
+            //VALIDACIONES DE CLIENTE
+            if ($("#txtclientedocumento").val().trim() == "" || $("#txtclientenombres").val().trim() == "") {
+                Swal.fire("Mensaje", "Complete los datos del cliente", "warning");
+                return;
+            }
+            //VALIDACIONES DE PRODUCTOS
+            if ($('#tbVenta tbody tr').length == 0) {
+                Swal.fire("Mensaje", "Debe registrar minimo un producto en la venta", "warning");
+                return;
+            }
+
+            //VALIDACIONES DE MONTO PAGO
+            if ($("#txtmontopago").val().trim() == "") {
+                Swal.fire("Mensaje", "Ingrese el monto de pago", "warning");
+                return;
+            }
+
+            var $totalproductos = 0;
+            var $totalimportes = 0;
+
+            var DETALLE = "";
+            var VENTA = "";
+            var DETALLE_CLIENTE = "";
+            var DETALLE_VENTA = "";
+            var DATOS_VENTA = "";
+
+            calcularCambio();
+
+            $('#tbVenta > tbody  > tr').each(function (index, tr) {
+                var fila = tr;
+                var productocantidad = parseInt($(fila).find("td.productocantidad").text());
+                var idproducto = $(fila).find("td.producto").data("idproducto");
+                var productoprecio = parseFloat($(fila).find("td.productoprecio").text());
+                var importetotal = parseFloat($(fila).find("td.importetotal").text());
+
+                $totalproductos = $totalproductos + productocantidad;
+                $totalimportes = $totalimportes + importetotal;
+
+                DATOS_VENTA = DATOS_VENTA + "<DATOS>" +
+                    "<IdVenta>0</IdVenta >" +
+                    "<IdProducto>" + idproducto + "</IdProducto>" +
+                    "<Cantidad>" + productocantidad + "</Cantidad>" +
+                    "<PrecioUnidad>" + productoprecio + "</PrecioUnidad>" +
+                    "<ImporteTotal>" + importetotal + "</ImporteTotal>" +
+                    "</DATOS>"
+            });
+
+
+            VENTA = "<VENTA>" +
+                "<IdTienda>" + $("#txtIdTienda").val() + "</IdTienda>" +
+                "<IdUsuario>" + $("#txtIdUsuario").val() + "</IdUsuario>" +
+                "<IdCliente>0</IdCliente>" +
+                "<TipoDocumento>" + $("#cboventatipodocumento").val() + "</TipoDocumento>" +
+                "<CantidadProducto>" + $('#tbVenta tbody tr').length + "</CantidadProducto>" +
+                "<CantidadTotal>" + $totalproductos + "</CantidadTotal>" +
+                "<TotalCosto>" + $totalimportes + "</TotalCosto>" +
+                "<ImporteRecibido>" + $("#txtmontopago").val() + "</ImporteRecibido>" +
+                "<ImporteCambio>" + $("#txtcambio").val() + "</ImporteCambio>" +
+                "</VENTA >";
+
+            DETALLE_CLIENTE = "<DETALLE_CLIENTE><DATOS>" +
+                "<TipoDocumento>" + $("#cboclientetipodocumento").val() + "</TipoDocumento>" +
+                "<NumeroDocumento>" + $("#txtclientedocumento").val() + "</NumeroDocumento>" +
+                "<Nombre>" + $("#txtclientenombres").val() + "</Nombre>" +
+                "<Direccion>" + $("#txtclientedireccion").val() + "</Direccion>" +
+                "<Telefono>" + $("#txtclientetelefono").val() + "</Telefono>" +
+                "</DATOS></DETALLE_CLIENTE>";
+
+            DETALLE_VENTA = "<DETALLE_VENTA>" + DATOS_VENTA + "</DETALLE_VENTA>";
+
+            DETALLE = "<DETALLE>" + VENTA + DETALLE_CLIENTE + DETALLE_VENTA + "</DETALLE>"
+
+
+            var request = { xml: DETALLE };
+
+            AjaxPost({
+                url: '@Url.Action("GuardarVenta", "Venta")',
+                tloading: ".card-venta",
+                obj: request,
+                success: (data) => {
+
+                    if (data.estado) {
+                        //DOCUMENTO
+                        $("#cboventatipodocumento").val("Boleta");
+
+                        //CLIENTE
+                        $("#cboclientetipodocumento").val("DNI");
+                        $("#txtclientedocumento").val("");
+                        $("#txtclientenombres").val("");
+                        $("#txtclientedireccion").val("");
+                        $("#txtclientetelefono").val("");
+
+
+                        //PRODUCTO
+                        $("#txtIdProducto").val("0");
+                        $("#txtproductocodigo").val("");
+                        $("#txtproductonombre").val("");
+                        $("#txtproductodescripcion").val("");
+                        $("#txtproductostock").val("");
+                        $("#txtproductoprecio").val("");
+                        $("#txtproductocantidad").val("0");
+
+                        //PRECIOS
+                        $("#txtsubtotal").val("0");
+                        $("#txtigv").val("0");
+                        $("#txttotal").val("0");
+                        $("#txtmontopago").val("");
+                        $("#txtcambio").val("");
+
+
+                        $("#tbVenta tbody").html("");
+
+
+                        var url = '@Url.Action("VentaDocumento", "Venta")' + "?IdVenta=" + data.respuesta;
+                        window.open(url);
+
+
+                    } else {
+                        MsgError(data.mensaje);
+                        //Swal.fire("Mensaje", "No se pudo registrar la venta", "warning")
+                    }
+
+                }
+            });
+
+        });
+
+        function calcularCambio() {
+            var montopago = $("#txtmontopago").val().trim() == "" ? 0 : parseFloat($("#txtmontopago").val().trim());
+            var totalcosto = parseFloat($("#txttotal").val().trim());
+            var cambio = 0;
+            cambio = (montopago <= totalcosto ? totalcosto : montopago) - totalcosto;
+
+            $("#txtcambio").val(cambio.toFixed(2));
+        }
+
+        $('#btncalcular').on('click', function () {
+            calcularCambio();
+        })
+
+
+        function calcularPrecios() {
+            var subtotal = 0;
+            var igv = 0;
+            var sumatotal = 0;
+            $('#tbVenta > tbody  > tr').each(function (index, tr) {
+                var fila = tr;
+                var importetotal = parseFloat($(fila).find("td.importetotal").text());
+                sumatotal = sumatotal + importetotal;
+            });
+            igv = sumatotal * 0.18;
+            subtotal = sumatotal - igv;
+
+
+            $("#txtsubtotal").val(subtotal.toFixed(2));
+            $("#txtigv").val(igv.toFixed(2));
+            $("#txttotal").val(sumatotal.toFixed(2));
+        }
+
+        function controlarStock($idproducto, $idtienda, $cantidad, $restar) {
+            var request = {
+                idproducto: $idproducto,
+                idtienda: $idtienda,
+                cantidad: $cantidad,
+                restar: $restar
+            }
+
+
+            AjaxPost({
+                url: '@Url.Action("ControlarStock", "Venta")',
+                obj: request,
+                success: (data) => {
+                    if (data.mensaje.length != 0) {
+                        MsgError(data.mensaje);
+                        return;
+                    }
+                }
+            });
+
+        }
+
+
+        window.onbeforeunload = function () {
+            if ($('#tbVenta tbody tr').length > 0) {
+
+                $('#tbVenta > tbody  > tr').each(function (index, tr) {
+                    var fila = tr;
+                    var productocantidad = parseInt($(fila).find("td.productocantidad").text());
+                    var idproducto = $(fila).find("td.producto").data("idproducto");
+
+                    controlarStock(parseInt(idproducto), parseInt($("#txtIdTienda").val()), parseInt(productocantidad), false);
+                });
+            }
+        };
+
+
+
+    </script>
+}

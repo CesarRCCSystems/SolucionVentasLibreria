@@ -1,0 +1,317 @@
+﻿
+@{
+    ViewBag.Title = "Tiendas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-store"></i>
+            Lista de Tiendas
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-info btn-block" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-success btn-block"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="tbtiendas" class="table table-striped table-bordered nowrap compact">
+                            <thead>
+                                <tr>
+                                    <th>RazonSocial</th>
+                                    <th>RUC</th>
+                                    <th>Dirección</th>
+                                    <th>Teléfono</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>              
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="tiendaModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <input id="txtIdTienda" type="hidden" value="" />
+
+
+                <form id="TiendaForm">
+
+                    <div class="form-group">
+                        <label>Razón Social:</label>
+                        <input id="txtNombreTienda" type="text" class="form-control form-control-sm" name="RazonSocial" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>RUC:</label>
+                        <input id="txtRuc" type="text" class="form-control form-control-sm" name="RUC" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dirección:</label>
+                        <input id="txtDireccion" type="text" class="form-control form-control-sm" name="Direccion" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefono:</label>
+                        <input id="txtTelefono" type="text" class="form-control form-control-sm" name="Telefono" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado:</label>
+                        <select id="cboEstado" class="form-select form-select-sm">
+                            <option value="1">Activo</option>
+                            <option value="0">No Activo</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <div id="messageError" class="alert alert-danger" role="alert">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between bg-white">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+        var dtTienda
+        var filaSeleccionada;
+        ShowLoading();
+
+        $(function () {
+            Title("Tienda");
+            $.LoadingOverlay("hide");
+           
+            dtTienda = GetDataTable({
+                TableId: '#tbtiendas',
+                Url: '@Url.Action("ListarTiendas", "Acceso")',
+                Columns: [
+                    { "data": "Nombre" },
+                    { "data": "RUC" },
+                    { "data": "Direccion" },
+                    { "data": "Telefono" }
+                ].concat(AED)                  
+            });
+
+        });
+
+        ////validamos el formulario
+        $("#TiendaForm").validate({
+            rules: {
+                RUC: pValid(),
+                RazonSocial: pValid(),
+                Telefono: pValid(),
+                Direccion: pValid()
+            },
+            messages: {
+                RUC: "- El campo 'RUC' es obligatorio.",
+                RazonSocial: "- El campo 'Razón Social' es obligatorio.",
+                Telefono: "- El campo 'Telefono' es obligatorio.",
+                Direccion: "- El campo 'Direccion' es obligatorio."
+            },
+            errorElement: "div",
+            errorLabelContainer: ".alert-danger"
+        });
+
+
+        const abrirModal = ({ IdTienda, Nombre, RUC, Direccion, Telefono, Activo }) => {
+
+            limpiarModal();
+
+            $('#messageError').hide();
+
+            if (IdTienda != null) {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-store',
+                    Title: ' Editar Tienda'
+                });
+
+                $('#txtIdTienda').val(IdTienda);
+                $('#txtNombreTienda').val(Nombre);
+                $('#txtRuc').val(RUC);
+                $('#txtDireccion').val(Direccion);
+                $('#txtTelefono').val(Telefono);
+                $('#cboEstado').val(Activo ? 1 : 0);
+
+            } else {
+                ModalTitle({
+                    Fontawesome: 'fas fa-store',
+                    Title: ' Nueva Tienda'
+                });
+            }
+
+
+            $('#tiendaModal').modal('show');
+        }
+
+        const limpiarModal = () => {
+
+            $('.modal-title').html('');
+            $('#txtIdTienda').val(0);
+            $('#txtNombreTienda').val('');
+            $('#txtRuc').val('');
+            $('#txtDireccion').val('');
+            $('#txtTelefono').val('');
+            $('#cboEstado').val(1);
+
+        }
+
+        $('#tbtiendas').on('click', '.btn-editar', function () {
+
+            let {data, row} = GetRow({
+                table: dtTienda,
+                ctx: this
+            });
+
+            filaSeleccionada = row;
+
+            abrirModal(data);
+        });
+
+        $('#tbtiendas  tbody').on('click', '.btn-eliminar', function () {
+
+            let { data, row } = GetRow({
+                table: dtTienda,
+                ctx: this
+            });
+
+            let { IdTienda, Nombre } = data;
+
+            SwalDelete({
+                Title: `¿Esta seguro (a) que desea eliminar la tienda "${Nombre}" ?`,
+                then: (result) => {
+
+                    if (result.isConfirmed) {
+
+                        AjaxPost({
+                            url: '@Url.Action("EliminarTienda", "Acceso")',
+                            obj: { id: IdTienda },
+                            success: (data) => {
+
+                                if (data.resultado) {
+                                    dtTienda.row(row).remove().draw();
+                                    MsgToast(`La Tienda "${Nombre}" ha sido eliminada correctamente.`);
+                                } else {
+                                    MsgError();
+                                    console.log(data.mensaje);
+                                }
+                            }
+                        });
+                   }
+                }
+            });
+
+        });
+
+        const guardar = () => {
+
+            if (!$('#TiendaForm').valid()) return;
+
+            let Tienda = {
+                IdTienda :  $('#txtIdTienda').val(),
+                Nombre  :   $('#txtNombreTienda').val(),
+                RUC:        $('#txtRuc').val(),
+                Direccion : $('#txtDireccion').val(),
+                Telefono:   $('#txtTelefono').val(),
+                Activo:     $('#cboEstado').val() == 1 ? true : false
+            }
+
+            AjaxPost({
+                url: '@Url.Action("GuardarTienda", "Acceso")',
+                tloading: '.modal-body',
+                obj: Tienda,
+                success: (data) => {
+
+                    if (Tienda.IdTienda == 0) {
+                        if (data.resultado != 0) {
+                            Tienda.IdTienda = data.resultado;
+                            dtTienda.row.add(Tienda).draw(false);
+                            $('#tiendaModal').modal('hide');
+                            MsgSaveSuccess();
+                        } else {
+                            MsgError();
+                            console.log(data.mensaje);
+                        }
+                    } else {
+                        if (data.resultado) {
+                            dtTienda.row(filaSeleccionada).data(Tienda).draw(false);
+                            filaSeleccionada = null;
+                            $('#tiendaModal').modal('hide');
+                            MsgEditSuccess();
+                        } else {
+                            MsgError();
+                            console.log(data.mensaje);
+                        }
+                    }
+
+                }
+            });
+
+        }
+
+    
+    </script>
+
+}
+

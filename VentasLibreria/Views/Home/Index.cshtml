@@ -1,0 +1,89 @@
+﻿@using CapaModelo;
+@using VentasLibreria.Models;
+@{
+    ViewBag.Title = "Home Page";
+    
+    Usuario usu = Util.GeUserInfo();
+}
+
+@section styles{
+    <style>
+        .fondo{
+            background: url("@Url.Content("~/Content/Images/Fondo-utiles-escolares.jpg")");
+        }
+
+    </style>
+}
+
+<div class="preloader flex-column justify-content-center align-items-center">
+    <img class="animation__shake" src="~/Content/Images/boligrafos.gif" alt="AdminLTELogo" height="350" width="350">
+</div>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="card card-outline card-info">
+
+            @*<div class="card-header">
+
+            </div>*@
+
+            <div class="card-body fondo">
+
+                <h1 class="text-info text-center">Bienvenido (a) al Sistema ! </h1>
+                <h3 class="text-dark text-center"> Usuario : @usu.Nombres</h3>
+                <h3 class="text-black text-center">Rol: @usu.oRol.Descripcion </h3>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+           
+               @* <img src="@Url.Content("~/Content/Images/Fondo-utiles-escolares.jpg")" />*@
+
+
+            </div>
+
+        </div>
+
+            <!--<div class="callout callout-info">-->
+               @* <h5><i class="fas fa-info"></i> Note:</h5>*@
+                <!--<h1 class="text-info">Bienvenido ! </h1>
+                <h4 class="text-dark">Bienvenido ! </h4>
+                <h4 class="text-black">Bienvenido ! </h4>
+                <img  src="@Url.Content("~/Content/Images/Fondo-utiles-escolares.jpg")"/>
+            </div>-->
+
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+@section scripts{
+<script>
+
+    Title("Bienvenido (a)")
+
+
+
+</script>
+
+}

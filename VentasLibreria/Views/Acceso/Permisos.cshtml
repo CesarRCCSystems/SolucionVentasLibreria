@@ -1,0 +1,202 @@
+﻿
+@{
+    ViewBag.Title = "Permisos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style>
+        #tbpermiso tbody {
+            display: block;
+            max-height: 300px;
+            overflow: auto;
+        }
+
+            #tbpermiso thead, #tbpermiso tbody tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+
+        #tbpermiso tbody {
+            width: 100%;
+        }
+
+        #tbpermiso thead {
+            width: 99%;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+
+    <div class="card card-info card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-user-lock me-1"></i> Permisos</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <label>Seleccion Rol:</label>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-select form-select-sm model" id="cboRol" name="Activo"></select>
+                </div>
+                <div class="col-sm-2">
+                    <button id="btnBuscar" type="button" class="btn btn-sm btn-primary btn-block" onclick="buscar()"> <i class="fas fa-search me-2"></i>  Buscar</button>
+                </div>
+                <div class="col-sm-2">
+                    <button id="btnGuardarCambios" class="btn btn-sm btn-info btn-block" onclick="Guardar()"><i class="fas fa-save me-2"></i>  Guardar Cambios</button>
+                </div>
+            </div>
+            <hr />
+
+            <div class="row mt-3 card-load">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+
+                        <table id="tbpermiso" class="table table-bordered table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Activar</th>
+                                    <th>Menu</th>
+                                    <th>Sub Menu</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+
+        $(function () {
+            Title('Permisos');
+
+        });
+
+
+        // OBTENER ROLES ////////////////
+
+        AjaxGet({
+            url: '@Url.Action("ListarRoles","Acceso")',
+            success: (data) => {
+                $('#cboRol').html('');
+                if (data.data != null) {
+
+                    $("#cboRol").html("");
+
+                    $("<option>").attr({ "value": 0 }).text("-- Seleccione --").appendTo("#cboRol");
+
+                    $.each(data.data, (index, item) => {
+                        if (item.Activo) {
+                            $('<option>')
+                                .attr({ "value": item.IdRol })
+                                .text(item.Descripcion)
+                                .appendTo('#cboRol');
+                        }
+                    });
+                }
+            }
+        });
+
+
+
+
+        const buscar = () => {
+            if ($("#cboRol").val() == 0) {
+                Swal.fire("Mensaje", "Seleccione un rol", "warning")
+                return;
+            }
+
+             ////OBTENER PERMISOS ////////////
+            AjaxGet({
+                url: '@Url.Action("ListarPermisos", "Acceso")' + '?id=' + $("#cboRol").val(),
+                success: (data) => {
+
+                    $("#tbpermiso tbody").html("");
+
+                    if (data != undefined) {
+                        $.each(data, function (i, row) {
+                            $("<tr>").append(
+                                $("<td>").text(i + 1),
+                                $("<td>").append(
+                                    $("<input>").attr({ "type": "checkbox" }).data("IdPermiso", row.IdPermisos).prop('checked', row.Activo)
+                                ),
+                                $("<td>").text(row.Menu),
+                                $("<td>").text(row.SubMenu)
+                            ).appendTo("#tbpermiso tbody");
+
+                        });
+                    }
+                }
+            });
+        }
+
+        const Guardar = () => {
+
+            if ($("#cboRol").val() == 0) {
+                Swal.fire("Mensaje", "Seleccione un rol", "warning")
+                return;
+            }
+            if ($("#tbpermiso tbody tr").length == 0) {
+                Swal.fire("Mensaje", "No hay datos", "warning")
+                return;
+            }
+
+            let $xml = "<DETALLE>"
+            let permiso = "";
+
+            $('input[type="checkbox"]').each(function () {
+
+                let idpermiso = $(this).data("IdPermiso").toString();
+                let activo = $(this).prop("checked") == true ? "1" : "0";
+
+                permiso = permiso + "<PERMISO><IdPermisos>" + idpermiso + "</IdPermisos><Activo>" + activo + "</Activo></PERMISO>";
+
+            });
+
+            $xml = $xml + permiso;
+            $xml = $xml + "</DETALLE>"
+
+            let request = { xml: $xml };
+
+            AjaxPost({
+                url: '@Url.Action("Guardar", "Acceso")',
+                obj: request,
+                success: (data) => {
+
+                    if (data.resultado) {
+                        $("#cboRol").val(0);
+                        $("#tbpermiso tbody").html("");
+                        MsgEditSuccess();
+                    } else {
+                        MsgError();
+                        //Swal.fire("Mensaje", "No se pudo guardar los cambios", "warning")
+                    }
+                }
+            });
+
+        } 
+
+    </script>
+
+}
+
+

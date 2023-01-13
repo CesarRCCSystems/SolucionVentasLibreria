@@ -1,0 +1,308 @@
+﻿
+@{
+    ViewBag.Title = "Marca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+
+            <h3 class="card-title">
+            <i class="fas fa-bookmark"></i>
+                Lista de Marcas
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button id="btnNuevaMarca" class="btn btn-sm btn-dark btn-block bg-gradient-info" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-dark btn-block bg-gradient-success"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+
+                <div class="col-sm-12">
+
+                    <table id="tbmarca" class="display table table-striped table-bordered nowrap compact">
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Shark</td>
+                                <td>Activo</td>
+                                <td> </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            @*<tr>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>*@
+                        </tfoot>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<div id="marcaModal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"> 
+                @*<i class="fas fa-bookmark"></i>
+                    Nueva Marca*@
+                </h5>
+
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+                  
+                <div class="modal-body">
+                 
+                 <input id="txtidMarca" type="hidden"/>
+
+                 <form id="MarcaForm">
+                     <div class="form-group">
+                         <label class="form-label">Descripción :</label>
+                         <input type="text" class="form-control form-control-sm" name="descripcion" id="txtdescMarca"/>
+                     </div>
+
+                     <div class="form-group">
+                         <label class="form-label">Estado :</label>
+                         <select id="cboactivo" class="form-select form-select-sm">
+                             <option value="1">Activo</option>
+                             <option value="0">No Activo</option>
+                         </select>
+                     </div>
+                 </form>
+        
+                   <div id="messageError" class="alert alert-danger" role="alert">
+
+                   </div>
+
+                </div>
+
+                <div class="modal-footer justify-content-between bg-white">
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+   
+    
+    <script>
+        var dtmarca
+        var filaSeleccionada;
+        ShowLoading();
+
+        $(function () {
+
+         Title("Marca");
+
+            HideLoading();
+
+            let cols = [
+                { "data": "Descripcion" }
+            ];
+
+            dtmarca = GetDataTable({
+                TableId: '#tbmarca',
+                Url: '@Url.Action("ListarMarcas", "Almacen")',
+                Columns: cols.concat(AED)
+            });
+
+        });
+
+        $('#MarcaForm').validate({
+            rules: {
+                descripcion: pValid([3,13])
+            },
+            messages: {
+                descripcion: "- El campo descripción es obligatorio"
+            },
+            errorElement: "div",
+            errorLabelContainer: ".alert-danger"
+        });
+
+        const abrirModal = ({ IdMarca, Descripcion, Activo }) => {
+
+        limpiarModal();
+
+        $('#messageError').hide();
+
+            if (IdMarca != null) {
+
+            ModalTitle({
+                Fontawesome: 'fas fa-bookmark',
+                Title: ' Editar Marca'
+            });
+
+            $('#txtidMarca').val(IdMarca);
+            $('#txtdescMarca').val(Descripcion);
+            $('#cboactivo').val(Activo == true ? 1 : 0);
+            } else {
+
+            ModalTitle({
+                Fontawesome: 'fas fa-bookmark',
+                Title: ' Nuava Marca'
+            });
+        }
+
+        $('#marcaModal').modal('show');
+
+    }
+
+        const limpiarModal = () => {
+
+            $('.modal-title').html('');
+            $('#txtidMarca').val(0);
+            $('#txtdescMarca').val("");
+            $('#cboactivo').val(1);
+        }
+
+        $('#tbmarca tbody').on('click','.btn-editar', function (){
+
+            //filaSeleccionada = $(this).closest('tr');
+            //var data = tbmarca.row(filaSeleccionada).data();
+
+            let { row, data } = GetRow({
+                table: dtmarca,
+                ctx: this
+            });
+
+            filaSeleccionada = row;
+
+            abrirModal(data);
+
+        });
+
+        $('#tbmarca tbody').on('click', '.btn-eliminar', function () {
+
+        let { row, data } = GetRow({
+            table: dtmarca,
+            ctx: this
+        });
+
+        let { IdMarca, Descripcion } = data;
+
+        SwalDelete({
+            Title: `¿Esta seguro(a) que desea eliminar la marca "${Descripcion}"?`,
+            then: (result) => {
+
+                if (result.isConfirmed) {
+
+                    AjaxPost({
+                        url: '@Url.Action("EliminarMarca", "Almacen")',
+                        obj: { id: IdMarca },
+                        success: (data) => {
+
+                            if (data.resultado) {
+                                dtmarca.row(row).remove().draw();
+                                MsgToast(`La marca "${Descripcion}" ha sido eliminada correctamente.`);
+                            } else {
+                                MsgError();
+                                console.log(data.mensaje);
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+    });
+
+       const guardar = () => {
+
+        if (!$("#MarcaForm").valid()) {
+            return;
+        }
+
+        var Marca = {
+            IdMarca: $('#txtidMarca').val(),
+            Descripcion: $('#txtdescMarca').val(),
+            Activo: $('#cboactivo').val() == 1 ? true : false,
+        }
+
+             AjaxPost({
+                url: '@Url.Action("GuardarMarca", "Almacen")',
+                tloading: '.modal-body',
+                obj: Marca,
+                success: (data) => {
+
+                    if (Marca.IdMarca == 0) {
+                        if (data.resultado != 0) {                
+                            Marca.IdMarca = data.resultado;
+                            dtmarca.row.add(Marca).draw(false);
+                            $('#marcaModal').modal('hide');
+                            MsgSaveSuccess();
+                        } else {
+                            MsgError(data.mensaje);
+                            console.log(data.mensaje);
+                        }
+                    } else {
+                        if (data.resultado) {                    
+                            dtmarca.row(filaSeleccionada).data(Marca).draw(false);
+                            filaSeleccionada = null;
+                            $('#marcaModal').modal('hide');
+                            MsgEditSuccess();
+                        } else {
+                            MsgError(data.mensaje);
+                            console.log(data.mensaje);
+                        }
+                    }
+
+                }
+            });
+
+        }
+
+    </script>
+}
+
+
+
+

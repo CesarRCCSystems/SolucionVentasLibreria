@@ -1,0 +1,348 @@
+﻿
+@{
+    ViewBag.Title = "Proveedores";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+
+}
+
+<div class="container-fluid">
+
+    <div class="card card-cyan card-outline">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-shipping-fast"></i>
+                Lista de Proveedores
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row align-items-end">
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-info btn-block" onclick="abrirModal('')"><i class="fas fa-plus-circle me-2"></i> Agregar Nuevo</button>
+                </div>
+                <div class="col-sm-2 mt-1">
+                    <button class="btn btn-sm btn-success btn-block"><i class="fas fa-file-excel me-2"></i>  Importar</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="tbproveedores" class="table table-striped table-bordered nowrap compact">
+                            <thead>
+                                <tr>
+                                    <th>RUC</th>
+                                    <th>Razon Social</th>
+                                    <th>Telefono</th>
+                                    <th>Correo</th>
+                                    <th>Dirección</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>      
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="ProvedoreModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" arial-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <input id="IdProveedor" type="hidden"/>
+
+                <form id="ProvForm">
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <label>RUC:</label>
+                            <input id="txtRuc" type="text" class="form-control form-control-sm" name="RUC" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Razon Social:</label>
+                            <input id="txtRazonSocial" type="text" class="form-control form-control-sm" name="RazonSocial" />
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <label>Telefono:</label>
+                            <input id="txtTelefono" type="tel" class="form-control form-control-sm" name="Telefono" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Correo:</label>
+                            <input id="txtCorreo" type="email" class="form-control form-control-sm" name="Correo"/>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <label>Direccion:</label>
+                            <input id="txtDireccion" type="text" class="form-control form-control-sm" name="Direccion" />
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <label>Estado:</label>
+                            <select id="cboActivo" class="form-select form-select-sm">
+                                <option value="1">Activo</option>
+                                <option value="0">No Activo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+
+                        <div id="messageError" class="alert alert-danger" role="alert">
+                      
+                        
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between bg-white">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left me-1"></i>  Cerrar</button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="guardar()">Guardar  <i class="fas fa-save ms-1"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script>
+        var dtProveedores
+        var filaSeleccionada;
+        ShowLoading();
+
+        $(function () {
+
+            $.LoadingOverlay("hide");
+            Title("Proveedores");
+
+            dtProveedores = GetDataTable({
+                TableId: '#tbproveedores',
+                Url: "@Url.Action("ListarProveedores", "Compra")",
+                Columns: [
+                    { "data": "RUC" },
+                    { "data": "RazonSocial" },
+                    { "data": "Telefono" },
+                    { "data": "Correo" },
+                    { "data": "Direccion" }
+                ].concat(AED)
+            });
+
+        });
+
+        //let rucValid = pValid(null , 11);
+
+        //rucValid.digits = true;
+
+        $('#ProvForm').validate({
+            rules: {
+                //RUC: Object.assign(pValid([11, 11]), { digits : true }),
+                //RUC: jQuery.extend(pValid([11, 11]), { digits : true }),
+                RUC: {
+                    ...pValid([11, 11]),
+                    ...{ digits: true }
+                },
+                RazonSocial: pValid(),
+                Telefono: pValid(),
+                Correo: pValid(),
+                Direccion: pValid(),
+            },
+            messages: {
+                RUC: "- El campo 'RUC' debe tener 11 dígitos. ¡Solo Numeros!",
+                RazonSocial: "- El campo 'Razon Social' es obligatorio.",
+                Telefono: "- El campo 'Teléfono' es obligatorio.",
+                Correo: "- El campo 'Correo' es obligatorio.",
+                Direccion: "- El campo 'Dirección' es obligatorio."
+            },
+            errorElement: "div",
+            errorLabelContainer: ".alert-danger"
+        });
+
+
+        const abrirModal = ({ IdProveedor, RUC, RazonSocial, Telefono, Correo, Direccion, Activo }) => {
+
+            $('#messageError').hide();
+
+            limpiarModal();
+
+            if (IdProveedor != null) {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-shipping-fast',
+                    Title: ' Editar Proveedor'
+                });
+
+                $('#IdProveedor').val(IdProveedor);
+                $('#txtRuc').val(RUC);
+                $('#txtRazonSocial').val(RazonSocial);
+                $('#txtTelefono').val(Telefono);
+                $('#txtCorreo').val(Correo);
+                $('#txtDireccion').val(Direccion);
+                $('#cboActivo').val(Activo ? 1 : 0);
+            } else {
+
+                ModalTitle({
+                    Fontawesome: 'fas fa-shipping-fast',
+                    Title: ' Nuevo Proveedor'
+                });
+            }
+
+            $('#ProvedoreModal').modal('show');
+
+        }
+
+        const limpiarModal = () =>{
+            $('.modal-title').html('');
+            $('#IdProveedor').val(0);
+            $('#txtRuc').val('');
+            $('#txtRazonSocial').val('');
+            $('#txtTelefono').val('');
+            $('#txtCorreo').val('');
+            $('#txtDireccion').val('');
+            $('#cboActivo').val(1);
+
+        }
+
+        $('#tbproveedores  tbody').on('click', '.btn-eliminar', function () {
+
+            let { data, row } = GetRow({
+                table: dtProveedores,
+                ctx: this
+            });
+
+            let { IdProveedor, RazonSocial } = data;
+
+            SwalDelete({
+                Title: `¿Esta seguro (a) que desea eliminar al proveedor "${RazonSocial}" ?`,
+                then: (result) => {
+
+                    if (result.isConfirmed) {
+
+                        AjaxPost({
+                            url: '@Url.Action("EliminarProveedor", "Compra")',
+                            obj: { id: IdProveedor },
+                            success: (data) => {
+
+                                if (data.resultado) {
+                                    dtProveedores.row(row).remove().draw();
+                                    MsgToast(`El proveedor ${RazonSocial} ha sido eliminado correctamente.`);
+                                } else {
+                                    MsgError();
+                                    console.log(data.mensaje);
+                                }
+                            }
+                        });
+                   }
+                }
+            });
+
+        });
+
+        $('#tbproveedores tbody').on('click', '.btn-editar', function () {
+
+            let { row, data } = GetRow({
+                table: dtProveedores,
+                ctx: this
+            });
+
+            filaSeleccionada = row;
+
+            abrirModal(data);
+        });
+
+
+        const guardar = () => {
+
+            if (!$('#ProvForm').valid()) return;
+
+            var Proveedor = {
+                IdProveedor: $('#IdProveedor').val(),
+                RUC: $('#txtRuc').val(),
+                RazonSocial: $('#txtRazonSocial').val(),
+                Telefono: $('#txtTelefono').val(),
+                Correo: $('#txtCorreo').val(),
+                Direccion: $('#txtDireccion').val(),
+                Activo: $('#cboActivo').val() == 1 ? true : false
+            }
+
+            AjaxPost({
+                url: '@Url.Action("GuardarProveedor", "Compra")',
+                tloading: '.modal-body',
+                obj: Proveedor,
+                success: (data) => {
+
+                    if (Proveedor.IdProveedor == 0) {
+                        if (data.resultado != 0) {
+                            Proveedor.IdProveedor = data.resultado;
+                            dtProveedores.row.add(Proveedor).draw(false);
+                            $('#ProvedoreModal').modal('hide');
+                            MsgSaveSuccess();
+                        } else {
+                            MsgError();
+                            console.log(data.mensaje);
+                        }
+                    } else {
+                        if (data.resultado) {
+                            dtProveedores.row(filaSeleccionada).data(Proveedor).draw(false);
+                            filaSeleccionada = null;
+                            $('#ProvedoreModal').modal('hide');
+                            MsgEditSuccess();
+                        } else {
+                            MsgError();
+                            console.log(data.mensaje);
+                        }
+                    }
+
+                }
+            });
+
+        }
+
+
+
+
+    </script>
+
+}
+

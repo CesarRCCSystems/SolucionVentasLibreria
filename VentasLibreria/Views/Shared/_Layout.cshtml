@@ -1,0 +1,164 @@
+﻿@using CapaDatos
+@using CapaModelo
+@{ 
+    Usuario usu = null;
+    usu = Session["Usuario"] as Usuario;
+    string nombreUsu = string.Empty;
+    string ImagenUsu = string.Empty;
+    string error = string.Empty;
+
+    if (usu != null)
+    {
+        nombreUsu = string.Format("{0}, {1}", usu.Nombres, usu.Apellidos);
+        ImagenUsu = usu.ImageBase64(out error);   
+    }
+}
+
+<!DOCTYPE html>
+<html lang="es-pe">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/AdminLTE/css")
+    @RenderSection("styles", required: false)
+
+    @* @Scripts.Render("~/bundles/modernizr")*@
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        @{
+
+            if (usu != null)
+            {
+                <!-- Navbar -->
+                @*@Html.Partial("_Navbar", new ViewDataDictionary { { "Nombres", usu.Nombres }, { "Apellidos", usu.Apellidos } })*@
+                @Html.Partial("_Navbar", new { nombre = nombreUsu, rol = usu.oRol, Imagen = ImagenUsu })
+                <!-- /.navbar -->
+                <!-- Main Sidebar Container -->
+                @Html.Partial("_Sidebar", new { menu = usu.oListaMenu, nombre = nombreUsu,  Imagen = ImagenUsu})
+            }
+        }
+
+        <!-- Content Wrapper. Contains page content -->
+
+        <div class="content-wrapper">
+
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+
+                <div class="container-fluid">
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-6">
+                            <h2 class="titulo1"></h2>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Home</a></li>
+                                <li class="breadcrumb-item active titulo2"></li>
+                            </ol>
+                        </div>
+
+                    </div>
+
+                </div><!-- /.container-fluid -->
+
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                @RenderBody()
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Footer -->
+        @Html.Partial("_Footer")
+
+    </div>
+
+    <!-- ./wrapper -->
+    @Scripts.Render("~/bundles/AdminLTE")
+    @Scripts.Render("~/bundles/Complementos")
+
+<script>
+        const ImageUrl = '@Url.Content("~/Content/images/boligrafos.gif")';
+
+
+
+        @*(function () {
+
+            setInterval(function () {
+              
+
+                $.post("@Url.Action("VerificarSession", "Login")", function (data) {
+
+                    if (data == "1") {
+
+                        console.log("No hay session");
+                        document.location.href = "@Url.Action("Autenticacion", "Login")";
+                    } else {
+                       // console.log("Si hay session");
+                    }
+                });
+
+            },30000);
+
+        })();*@
+
+
+
+
+
+
+</script>
+
+    @Scripts.Render("~/bundles/Utils")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+
+
+
+@*<div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Nombre de la aplicación", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Inicio", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
+        </footer>
+    </div>*@
+
+@*@Scripts.Render("~/bundles/jquery")*@
+@*@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/Complementos")*@
+
